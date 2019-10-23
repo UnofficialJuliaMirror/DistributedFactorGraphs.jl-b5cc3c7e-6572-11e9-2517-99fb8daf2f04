@@ -95,10 +95,10 @@ end
     # Sets
     v1Prime = deepcopy(v1)
     #updateVariable! returns the variable updated, so should be equal
-    @test updateVariable!(dfg, v1Prime) == v1
+    @test updateVariable!(dfg, v1Prime) == v1Prime
     f1Prime = deepcopy(f1)
     #updateFactor! returns the factor updated, so should be equal
-    @test updateFactor!(dfg, f1Prime) == f1Prime #TODO compare with f1  
+    @test updateFactor!(dfg, f1Prime) == f1Prime
 
     # Accessors
     @test label(v1) == v1.label
@@ -190,6 +190,7 @@ end
     @test deepcopy(de2_update) == deleteBigDataEntry!(dfg, :a, :key2)
     @test getBigDataKeys(v1) == Symbol[]
 end
+
 
 @testset "Updating Nodes" begin
     global dfg

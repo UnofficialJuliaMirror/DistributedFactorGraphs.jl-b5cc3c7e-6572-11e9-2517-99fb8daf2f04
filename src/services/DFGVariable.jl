@@ -117,40 +117,12 @@ Equality check for VariableEstimate.
 """
 function ==(a::VariableEstimate, b::VariableEstimate)::Bool
   a.solverKey != b.solverKey && @debug("solverKey are not equal")==nothing && return false
-  a.ppeType != b.ppeType && @debug("type is not equal")==nothing && return false
+  a.ppeType != b.ppeType && @debug("ppeType is not equal")==nothing && return false
   a.estimate != b.estimate && @debug("estimate are not equal")==nothing && return false
   a.lastUpdatedTimestamp != b.lastUpdatedTimestamp && @debug("lastUpdatedTimestamp is not equal")==nothing && return false
   return true
 end
 
-"""
-    $(SIGNATURES)
-Equality check for DFGVariable.
-"""
-function ==(a::DFGVariable, b::DFGVariable)::Bool
-  a.label != b.label && @debug("label is not equal")==nothing && return false
-  a.timestamp != b.timestamp && @debug("timestamp is not equal")==nothing && return false
-  a.tags != b.tags && @debug("tags is not equal")==nothing && return false
-  symdiff(keys(a.estimateDict), keys(b.estimateDict)) != Set(Symbol[]) && @debug("estimateDict keys are not equal")==nothing && return false
-  for k in keys(a.estimateDict)
-    a.estimateDict[k] != b.estimateDict[k] && @debug("estimateDict[$k] is not equal")==nothing && return false
-  end
-  symdiff(keys(a.solverDataDict), keys(b.solverDataDict)) != Set(Symbol[]) && @debug("solverDataDict keys are not equal")==nothing && return false
-  for k in keys(a.solverDataDict)
-    a.solverDataDict[k] != b.solverDataDict[k] && @debug("solverDataDict[$k] is not equal")==nothing && return false
-  end
-  a.smallData != b.smallData && @debug("smallData is not equal")==nothing && return false
-  a.bigData != b.bigData && @debug("bigData is not equal")==nothing && return false
-  a.ready != b.ready && @debug("ready is not equal")==nothing && return false
-  a.backendset != b.backendset && @debug("backendset is not equal")==nothing && return false
-  a._internalId != b._internalId && @debug("_internalId is not equal")==nothing && return false
-  return true
-end
-
-"""
-    $(SIGNATURES)
-Convert a DFGVariable to a DFGVariableSummary.
-"""
 function convert(::Type{DFGVariableSummary}, v::DFGVariable)
     return DFGVariableSummary(v.label, v.timestamp, deepcopy(v.tags), deepcopy(v.estimateDict), Symbol(typeof(getSofttype(v))), v._internalId)
 end
