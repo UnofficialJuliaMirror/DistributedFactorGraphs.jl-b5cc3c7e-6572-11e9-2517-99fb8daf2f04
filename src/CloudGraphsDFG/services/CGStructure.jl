@@ -41,6 +41,10 @@ function createUser(dfg::CloudGraphsDFG, user::User)::User
 	Symbol(dfg.userId) != user.id && error("DFG user ID must match user's ID")
 	!_isValid(user) && error("Node cannot have an ID '$(user.id)'.")
 
+	# Already exists?
+	length(_getNeoNodesFromCyphonQuery(dfg.neo4jInstance, "(node:USER:$(dfg.userId))")) != 0 &&
+		error("Robot '$(robot.id)' already exists for user '$(robot.userId)'")
+
 	props = _convertNodeToDict(user)
 	retNode = _createNode(dfg.neo4jInstance, ["USER", String(user.id)], props, nothing)
 	return user
@@ -86,6 +90,11 @@ end
 
 function listSessions(dfg::CloudGraphsDFG)::Vector{Session}
 	sessionNodes = _getNeoNodesFromCyphonQuery(dfg.neo4jInstance, "(node:SESSION:$(dfg.robotId):$(dfg.userId))")
+	return map(s -> _convertDictToSession(Neo4j.getnodeproperties(s)), sessionNodes)
+end
+
+function  listSessions(neo4jInstance::Neo4jInstance, userId::String)::Vector{Session}
+	sessionNodes = _getNeoNodesFromCyphonQuery(neo4jInstance, "(u:USER:$userId)-[:ROBOT]->(:ROBOT)-[:SESSION]->(node:SESSION)")
 	return map(s -> _convertDictToSession(Neo4j.getnodeproperties(s)), sessionNodes)
 end
 
